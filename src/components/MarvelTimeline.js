@@ -49,9 +49,20 @@ const YearsList = styled(Box)({
   display: "flex",
   flexDirection: "column",
   justifyContent: "space-between",
+  height: "90vh",
   color: "#333",
-  minWidth: "20px",
+  minWidth: "100px",
   marginRight: "100px",
+  position: "relative",
+});
+
+const YearsContainer = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  height: "100%",
+
+  pointerEvents: "none",
 });
 
 const MoviePosters = styled(Box)({
@@ -95,10 +106,40 @@ const SocialIcons = styled(Box)({
   gap: "20px",
 });
 
+const BigYearDisplay = styled(Box)({
+  position: "absolute",
+  left: "0",
+  right: "0",
+  display: "flex",
+  pointerEvents: "none",
+  fontWeight: "bold",
+  transition: "all 0.3s ease",
+  zIndex: 2,
+  fontSize: "100px",
+  transform: "translateY(-50%)",
+  justifyContent: "center",
+});
+
+const YearItem = styled(Box)({
+  position: "relative",
+  display: "flex",
+  alignItems: "center",
+  pointerEvents: "auto",
+  width: "100px",
+  cursor: "pointer",
+  justifyContent: "center",
+  "&:hover": {
+    backgroundColor: "rgba(255, 255, 255, 0.02)",
+  },
+});
+
 const MarvelTimeline = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState(2008);
+  const [hoveredYear, setHoveredYear] = useState(null);
+  const [hoveredYearPosition, setHoveredYearPosition] = useState(0);
+  const [selectedYearPosition, setSelectedYearPosition] = useState(0);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -185,27 +226,79 @@ const MarvelTimeline = () => {
 
       {/* Right Section */}
       <RightSection item xs={7}>
-        <YearsList>
-          {timelineYears.map((year) => (
-            <Typography
-              key={year}
-              onClick={() => setSelectedYear(year)}
-              sx={{
-                color: selectedYear === year ? "#e23636" : "#666",
-                fontWeight: "bold",
-                fontSize: "24px",
-                cursor: "pointer",
-                transition: "color 0.3s ease",
-                "&:hover": {
-                  color: "#e23636",
-                },
-                fontFamily: "'Helvetica', sans-serif",
-                lineHeight: 1,
-              }}
-            >
-              {String(year).slice(-2)}
-            </Typography>
-          ))}
+        <BigYearDisplay
+          sx={{
+            top: hoveredYear ? hoveredYearPosition : selectedYearPosition,
+          }}
+        >
+          <Box
+            sx={{
+              color: "#e23636",
+              marginRight: "-8px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            20
+          </Box>
+          <Box
+            sx={{
+              color: "#fff",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            {hoveredYear
+              ? String(hoveredYear).slice(-2)
+              : String(selectedYear).slice(-2)}
+          </Box>
+        </BigYearDisplay>
+
+        <YearsList
+          onMouseLeave={() => {
+            setHoveredYear(null);
+          }}
+        >
+          <YearsContainer>
+            {timelineYears.map((year) => (
+              <YearItem
+                key={year}
+                onClick={(e) => {
+                  setSelectedYear(year);
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  setSelectedYearPosition(rect.top);
+                }}
+                onMouseEnter={(e) => {
+                  setHoveredYear(year);
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  setHoveredYearPosition(rect.top);
+                }}
+                ref={(node) => {
+                  if (node && year === selectedYear) {
+                    const rect = node.getBoundingClientRect();
+                    setSelectedYearPosition(rect.top);
+                  }
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: selectedYear === year ? "#e23636" : "#666",
+                    fontWeight: "bold",
+                    fontSize: "20px",
+                    transition: "all 0.3s ease",
+                    fontFamily: "'Helvetica', sans-serif",
+                    lineHeight: 1,
+                    position: "relative",
+                    zIndex: 1,
+                    pointerEvents: "none",
+                    opacity: hoveredYear === year ? 0 : 1,
+                  }}
+                >
+                  {String(year).slice(-2)}
+                </Typography>
+              </YearItem>
+            ))}
+          </YearsContainer>
         </YearsList>
 
         <Box
