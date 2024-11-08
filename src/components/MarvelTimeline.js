@@ -8,6 +8,10 @@ import YouTubeIcon from "@mui/icons-material/YouTube";
 import MenuIcon from "@mui/icons-material/Menu";
 import { getMarvelPhaseOneMovies } from "../utils/tmdbApi";
 import MovieDetail from "./MovieDetail";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemText from "@mui/material/ListItemText";
+import Divider from "@mui/material/Divider";
 
 const Container = styled(Grid)({
   height: "100vh",
@@ -24,7 +28,7 @@ const LeftSection = styled(Grid)({
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
-  alignItems: "center",
+  alignItems: "flex-start",
   height: "100vh",
   overflow: "hidden",
 });
@@ -99,14 +103,6 @@ const LoadingPoster = styled(Skeleton)({
   borderRadius: "8px",
 });
 
-const SocialIcons = styled(Box)({
-  position: "absolute",
-  left: "20px",
-  display: "flex",
-  flexDirection: "column",
-  gap: "20px",
-});
-
 const BigYearDisplay = styled(Box)({
   position: "absolute",
   left: "0",
@@ -116,8 +112,8 @@ const BigYearDisplay = styled(Box)({
   fontWeight: "bold",
   transition: "all 0.3s ease",
   zIndex: 2,
-  fontSize: "100px",
-  transform: "translate(-8%, -30%)",
+  fontSize: "60px",
+  transform: "translateY(-30%)",
   justifyContent: "center",
 });
 
@@ -137,6 +133,30 @@ const YearItem = styled(Box)({
   },
 });
 
+const StyledMenu = styled(Menu)({
+  "& .MuiPaper-root": {
+    backgroundColor: "#fff",
+    width: "300px",
+    maxHeight: "80vh",
+    borderRadius: "8px",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+  },
+});
+
+const StyledMenuItem = styled(MenuItem)({
+  padding: "12px 24px",
+  "&:hover": {
+    backgroundColor: "rgba(226, 54, 54, 0.08)",
+  },
+});
+
+const YearHeader = styled(Typography)({
+  padding: "16px 24px",
+  color: "#e23636",
+  fontWeight: "bold",
+  fontSize: "18px",
+});
+
 const MarvelTimeline = () => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -145,6 +165,8 @@ const MarvelTimeline = () => {
   const [hoveredYearPosition, setHoveredYearPosition] = useState(0);
   const [selectedYearPosition, setSelectedYearPosition] = useState(0);
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [menuMovies, setMenuMovies] = useState({});
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -162,44 +184,107 @@ const MarvelTimeline = () => {
     fetchMovies();
   }, [selectedYear]);
 
+  useEffect(() => {
+    const fetchAllMovies = async () => {
+      const allMovies = {};
+      for (const year of timelineYears) {
+        try {
+          const movies = await getMarvelPhaseOneMovies(year);
+          allMovies[year] = movies;
+        } catch (error) {
+          console.error(`Error fetching movies for ${year}:`, error);
+        }
+      }
+      setMenuMovies(allMovies);
+    };
+
+    fetchAllMovies();
+  }, []);
+
   const timelineYears = [
     2008, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021,
     2022, 2023,
   ];
 
+  const handleMenuOpen = (event) => {
+    setMenuAnchor(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchor(null);
+  };
+
+  const handleMovieSelect = (movie, year) => {
+    setSelectedYear(year);
+    setSelectedMovie(movie);
+    handleMenuClose();
+  };
+
   return (
     <Container container>
       {/* Left Section */}
       <LeftSection item xs={5}>
-        <MenuButton>
+        <MenuButton onClick={handleMenuOpen}>
           <MenuIcon />
         </MenuButton>
 
-        <SocialIcons>
-          <IconButton color="black">
-            <FacebookIcon />
-          </IconButton>
-          <IconButton color="black">
-            <TwitterIcon />
-          </IconButton>
-          <IconButton color="black">
-            <InstagramIcon />
-          </IconButton>
-          <IconButton color="black">
-            <YouTubeIcon />
-          </IconButton>
-        </SocialIcons>
+        <StyledMenu
+          anchorEl={menuAnchor}
+          open={Boolean(menuAnchor)}
+          onClose={handleMenuClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+        >
+          {timelineYears.map((year) => (
+            <React.Fragment key={year}>
+              <YearHeader>
+                {year} - Phase{" "}
+                {year <= 2012
+                  ? "I"
+                  : year <= 2015
+                    ? "II"
+                    : year <= 2019
+                      ? "III"
+                      : "IV"}
+              </YearHeader>
+              {menuMovies[year]?.map((movie) => (
+                <StyledMenuItem
+                  key={movie.id}
+                  onClick={() => handleMovieSelect(movie, year)}
+                >
+                  <ListItemText
+                    primary={movie.title}
+                    primaryTypographyProps={{
+                      style: {
+                        fontWeight: "500",
+                        fontSize: "15px",
+                      },
+                    }}
+                  />
+                </StyledMenuItem>
+              ))}
+              {year !== timelineYears[timelineYears.length - 1] && <Divider />}
+            </React.Fragment>
+          ))}
+        </StyledMenu>
 
         <Box
           sx={{
-            textAlign: "center",
+            textAlign: "left",
             maxWidth: "400px",
+            marginLeft: "60px",
           }}
         >
           <img
             src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Marvel_Logo.svg"
             alt="Marvel Logo"
-            style={{ width: "300px", marginBottom: "30px" }}
+            style={{ width: "300px", marginBottom: "30px", display: "block" }}
           />
           <Typography
             variant="h6"
@@ -210,6 +295,7 @@ const MarvelTimeline = () => {
               lineHeight: 1.4,
               fontSize: "18px",
               fontWeight: "bold",
+              textAlign: "left",
             }}
           >
             How to watch every Marvel Cinematic Universe film in the perfect
@@ -223,9 +309,10 @@ const MarvelTimeline = () => {
           sx={{
             position: "absolute",
             bottom: "40px",
+            left: "40px",
           }}
         >
-          ©2018 MARVEL
+          For MARVEL fans
         </Typography>
       </LeftSection>
 
@@ -245,17 +332,25 @@ const MarvelTimeline = () => {
           >
             <Box
               sx={{
-                color: "#e23636",
-                marginRight: "-8px",
+                backgroundColor: "#000",
+                padding: "0 10px",
                 display: "flex",
                 alignItems: "center",
-                lineHeight: "0.5",
-                position: "relative",
-                zIndex: 3,
-                letterSpacing: "0.1em",
               }}
             >
-              20
+              <Box
+                sx={{
+                  color: "#e23636",
+                  display: "flex",
+                  alignItems: "center",
+                  lineHeight: "0.5",
+                  position: "relative",
+                  zIndex: 3,
+                  letterSpacing: "0.1em",
+                }}
+              >
+                20
+              </Box>
             </Box>
             <Box
               sx={{
@@ -263,10 +358,10 @@ const MarvelTimeline = () => {
                 display: "flex",
                 alignItems: "center",
                 lineHeight: "0.5",
-                backgroundColor: "#000",
                 position: "relative",
                 zIndex: 2,
                 width: "fit-content",
+                marginLeft: "-8px",
               }}
             >
               {hoveredYear
