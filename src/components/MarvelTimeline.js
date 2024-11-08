@@ -116,7 +116,7 @@ const BigYearDisplay = styled(Box)({
   transition: "all 0.3s ease",
   zIndex: 2,
   fontSize: "100px",
-  transform: "translateY(-50%)",
+  transform: "translateY(-42%)",
   justifyContent: "center",
 });
 
