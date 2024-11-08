@@ -7,6 +7,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import MenuIcon from "@mui/icons-material/Menu";
 import { getMarvelPhaseOneMovies } from "../utils/tmdbApi";
+import MovieDetail from "./MovieDetail";
 
 const Container = styled(Grid)({
   height: "100vh",
@@ -143,6 +144,7 @@ const MarvelTimeline = () => {
   const [hoveredYear, setHoveredYear] = useState(null);
   const [hoveredYearPosition, setHoveredYearPosition] = useState(0);
   const [selectedYearPosition, setSelectedYearPosition] = useState(0);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -365,6 +367,7 @@ const MarvelTimeline = () => {
                   key={movie.id}
                   src={movie.poster_path}
                   alt={movie.title}
+                  onClick={() => setSelectedMovie(movie)}
                   onError={(e) => {
                     e.target.src =
                       "https://via.placeholder.com/280x420?text=No+Poster";
@@ -376,6 +379,14 @@ const MarvelTimeline = () => {
           </MoviePosters>
         </Box>
       </RightSection>
+
+      {/* Add MovieDetail component */}
+      {selectedMovie && (
+        <MovieDetail
+          movie={selectedMovie}
+          onClose={() => setSelectedMovie(null)}
+        />
+      )}
     </Container>
   );
 };
