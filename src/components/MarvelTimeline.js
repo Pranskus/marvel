@@ -51,8 +51,8 @@ const YearsList = styled(Box)({
   justifyContent: "space-between",
   height: "90vh",
   color: "#333",
-  minWidth: "100px",
-  marginRight: "100px",
+  minWidth: "40px",
+  marginRight: "10px",
   position: "relative",
 });
 
@@ -116,7 +116,7 @@ const BigYearDisplay = styled(Box)({
   transition: "all 0.3s ease",
   zIndex: 2,
   fontSize: "100px",
-  transform: "translateY(-42%)",
+  transform: "translate(-8%, -30%)",
   justifyContent: "center",
 });
 
@@ -127,7 +127,10 @@ const YearItem = styled(Box)({
   pointerEvents: "auto",
   width: "100px",
   cursor: "pointer",
-  justifyContent: "center",
+  justifyContent: "flex-start",
+  paddingLeft: "0px",
+  marginLeft: "-10px",
+  paddingRight: "40px",
   "&:hover": {
     backgroundColor: "rgba(255, 255, 255, 0.02)",
   },
@@ -233,24 +236,41 @@ const MarvelTimeline = () => {
         >
           <Box
             sx={{
-              color: "#e23636",
-              marginRight: "-8px",
               display: "flex",
               alignItems: "center",
+              lineHeight: 0.8,
             }}
           >
-            20
-          </Box>
-          <Box
-            sx={{
-              color: "#fff",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            {hoveredYear
-              ? String(hoveredYear).slice(-2)
-              : String(selectedYear).slice(-2)}
+            <Box
+              sx={{
+                color: "#e23636",
+                marginRight: "-8px",
+                display: "flex",
+                alignItems: "center",
+                lineHeight: "0.5",
+                position: "relative",
+                zIndex: 3,
+                letterSpacing: "0.1em",
+              }}
+            >
+              20
+            </Box>
+            <Box
+              sx={{
+                color: "#fff",
+                display: "flex",
+                alignItems: "center",
+                lineHeight: "0.5",
+                backgroundColor: "#000",
+                position: "relative",
+                zIndex: 2,
+                width: "fit-content",
+              }}
+            >
+              {hoveredYear
+                ? String(hoveredYear).slice(-2)
+                : String(selectedYear).slice(-2)}
+            </Box>
           </Box>
         </BigYearDisplay>
 
@@ -292,6 +312,7 @@ const MarvelTimeline = () => {
                     zIndex: 1,
                     pointerEvents: "none",
                     opacity: hoveredYear === year ? 0 : 1,
+                    paddingLeft: "10px",
                   }}
                 >
                   {String(year).slice(-2)}
