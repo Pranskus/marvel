@@ -336,6 +336,7 @@ const MarvelTimeline = () => {
                 padding: "0 10px",
                 display: "flex",
                 alignItems: "center",
+                marginLeft: "-90px",
               }}
             >
               <Box
