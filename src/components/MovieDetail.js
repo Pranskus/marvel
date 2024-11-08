@@ -28,6 +28,8 @@ const LeftSection = styled(Box)(({ isOpen }) => ({
   transform: `translateX(${isOpen ? "0" : "-100%"})`,
   transition: "all 0.6s ease-in-out",
   transitionDelay: isOpen ? "0.2s" : "0s",
+  justifyContent: "center",
+  height: "100%",
 }));
 
 const RightSection = styled(Box)(({ isOpen }) => ({
@@ -44,13 +46,26 @@ const RightSection = styled(Box)(({ isOpen }) => ({
 
 const MovieImage = styled("img")(({ isOpen }) => ({
   width: "100%",
-  height: "100%",
+  height: "105%",
   objectFit: "cover",
   objectPosition: "top",
-  transition: "all 0.6s ease-in-out",
-  transform: isOpen ? "translateX(0)" : "translateX(100%)",
+  transition: "all 1.5s ease-out",
+  transform: isOpen ? "translateX(0) scale(1.05)" : "translateX(100%) scale(1)",
+  transformOrigin: "center top",
+  animation: isOpen ? "parallaxScroll 25s ease-out infinite alternate" : "none",
+  "@keyframes parallaxScroll": {
+    "0%": {
+      objectPosition: "center 0%",
+      transform: "translateX(0) scale(1)",
+    },
+    "100%": {
+      objectPosition: "center 10%",
+      transform: "translateX(0) scale(1.2)",
+    },
+  },
   "&:hover": {
-    transform: isOpen ? "scale(1.05)" : "translateX(100%)",
+    transform: isOpen ? "translateX(0) scale(1.12)" : "translateX(100%)",
+    transition: "all 0.6s ease-out",
   },
 }));
 
@@ -105,88 +120,96 @@ const MovieDetail = ({ movie, onClose }) => {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
-            mb: 4,
-            opacity: isOpen ? 1 : 0,
-            transform: `translateY(${isOpen ? "0" : "-20px"})`,
-            transition: "all 0.6s ease-in-out",
-            transitionDelay: "0.4s",
+            flexDirection: "column",
+            maxHeight: "80vh",
+            justifyContent: "center",
           }}
         >
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Marvel_Logo.svg"
-            alt="Marvel Logo"
-            style={{ width: "120px" }}
-          />
-          <CloseButton onClick={handleClose} isOpen={isOpen}>
-            <CloseIcon />
-          </CloseButton>
-        </Box>
-
-        <Typography
-          variant="h3"
-          sx={{
-            mb: 3,
-            fontWeight: "bold",
-            opacity: isOpen ? 1 : 0,
-            transform: `translateY(${isOpen ? "0" : "20px"})`,
-            transition: "all 0.6s ease-in-out",
-            transitionDelay: "0.5s",
-          }}
-        >
-          {movie.title}
-        </Typography>
-
-        <Typography
-          variant="body1"
-          sx={{
-            mb: 4,
-            color: "#666",
-            lineHeight: 1.6,
-            opacity: isOpen ? 1 : 0,
-            transform: `translateY(${isOpen ? "0" : "20px"})`,
-            transition: "all 0.6s ease-in-out",
-            transitionDelay: "0.6s",
-          }}
-        >
-          {movie.overview}
-        </Typography>
-
-        <Box
-          sx={{
-            mt: "auto",
-            opacity: isOpen ? 1 : 0,
-            transform: `translateY(${isOpen ? "0" : "20px"})`,
-            transition: "all 0.6s ease-in-out",
-            transitionDelay: "0.7s",
-          }}
-        >
-          <Typography
-            variant="caption"
-            sx={{ color: "#999", textTransform: "uppercase" }}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              mb: 4,
+              opacity: isOpen ? 1 : 0,
+              transform: `translateY(${isOpen ? "0" : "-20px"})`,
+              transition: "all 0.6s ease-in-out",
+              transitionDelay: "0.4s",
+            }}
           >
-            RELEASE DATE
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Marvel_Logo.svg"
+              alt="Marvel Logo"
+              style={{ width: "120px" }}
+            />
+            <CloseButton onClick={handleClose} isOpen={isOpen}>
+              <CloseIcon />
+            </CloseButton>
+          </Box>
+
+          <Typography
+            variant="h3"
+            sx={{
+              mb: 3,
+              fontWeight: "bold",
+              opacity: isOpen ? 1 : 0,
+              transform: `translateY(${isOpen ? "0" : "20px"})`,
+              transition: "all 0.6s ease-in-out",
+              transitionDelay: "0.5s",
+            }}
+          >
+            {movie.title}
           </Typography>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            {new Date(movie.release_date).toLocaleDateString("en-US", {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            })}
+
+          <Typography
+            variant="body1"
+            sx={{
+              mb: 4,
+              color: "#666",
+              lineHeight: 1.6,
+              opacity: isOpen ? 1 : 0,
+              transform: `translateY(${isOpen ? "0" : "20px"})`,
+              transition: "all 0.6s ease-in-out",
+              transitionDelay: "0.6s",
+            }}
+          >
+            {movie.overview}
+          </Typography>
+
+          <Box
+            sx={{
+              opacity: isOpen ? 1 : 0,
+              transform: `translateY(${isOpen ? "0" : "20px"})`,
+              transition: "all 0.6s ease-in-out",
+              transitionDelay: "0.7s",
+            }}
+          >
+            <Typography
+              variant="caption"
+              sx={{ color: "#999", textTransform: "uppercase" }}
+            >
+              RELEASE DATE
+            </Typography>
+            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+              {new Date(movie.release_date).toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </Typography>
+          </Box>
+
+          <Typography
+            sx={{
+              mt: 4,
+              color: "#999",
+              opacity: isOpen ? 1 : 0,
+              transition: "opacity 0.6s ease-in-out",
+              transitionDelay: "0.8s",
+            }}
+          >
+            Enjoy your Marvel movie experience!
           </Typography>
         </Box>
-
-        <Typography
-          sx={{
-            mt: 4,
-            color: "#999",
-            opacity: isOpen ? 1 : 0,
-            transition: "opacity 0.6s ease-in-out",
-            transitionDelay: "0.8s",
-          }}
-        >
-          ©2018 MARVEL
-        </Typography>
       </LeftSection>
 
       <RightSection isOpen={isOpen}>
