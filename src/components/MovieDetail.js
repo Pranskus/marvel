@@ -19,7 +19,7 @@ const Container = styled(Box)(({ isOpen }) => ({
 }));
 
 const LeftSection = styled(Box)(({ isOpen }) => ({
-  width: "40%",
+  width: "43%",
   padding: "40px",
   display: "flex",
   flexDirection: "column",
@@ -39,12 +39,14 @@ const RightSection = styled(Box)(({ isOpen }) => ({
   transition: "all 0.6s ease-in-out",
   transitionDelay: isOpen ? "0.2s" : "0s",
   backgroundColor: "#000",
+  padding: 0,
 }));
 
 const MovieImage = styled("img")(({ isOpen }) => ({
   width: "100%",
   height: "100%",
   objectFit: "cover",
+  objectPosition: "top",
   transition: "all 0.6s ease-in-out",
   transform: isOpen ? "translateX(0)" : "translateX(100%)",
   "&:hover": {
