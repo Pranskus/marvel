@@ -9,10 +9,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { getMarvelPhaseOneMovies } from "../utils/tmdbApi";
 
 const Container = styled(Grid)({
-  height: "100%",
+  height: "100vh",
   margin: 0,
   padding: 0,
   display: "flex",
+  overflow: "hidden",
 });
 
 const LeftSection = styled(Grid)({
@@ -24,6 +25,7 @@ const LeftSection = styled(Grid)({
   justifyContent: "center",
   alignItems: "center",
   height: "100vh",
+  overflow: "hidden",
 });
 
 const MenuButton = styled(IconButton)({
@@ -39,12 +41,14 @@ const RightSection = styled(Grid)({
   flexDirection: "row",
   gap: "40px",
   width: "60%",
+  height: "100vh",
+  overflow: "hidden",
 });
 
 const YearsList = styled(Box)({
   display: "flex",
   flexDirection: "column",
-  gap: "5px",
+  justifyContent: "space-between",
   color: "#333",
   minWidth: "20px",
   marginRight: "100px",
@@ -54,7 +58,7 @@ const MoviePosters = styled(Box)({
   display: "grid",
   gridTemplateColumns: "repeat(2, 1fr)",
   gap: "40px",
-  maxHeight: "calc(120vh - 200px)",
+  maxHeight: "calc(100vh - 200px)",
   borderRadius: "8px",
   overflowY: "auto",
   paddingRight: "10px",
@@ -67,7 +71,7 @@ const MoviePosters = styled(Box)({
 });
 
 const MoviePoster = styled("img")({
-  width: "80%",
+  width: "100%",
   height: "auto",
   borderRadius: "8px",
   transition: "transform 0.3s ease",
@@ -85,7 +89,7 @@ const LoadingPoster = styled(Skeleton)({
 
 const SocialIcons = styled(Box)({
   position: "absolute",
-  left: "40px",
+  left: "20px",
   display: "flex",
   flexDirection: "column",
   gap: "20px",
@@ -126,16 +130,16 @@ const MarvelTimeline = () => {
         </MenuButton>
 
         <SocialIcons>
-          <IconButton color="primary">
+          <IconButton color="black">
             <FacebookIcon />
           </IconButton>
-          <IconButton color="primary">
+          <IconButton color="black">
             <TwitterIcon />
           </IconButton>
-          <IconButton color="primary">
+          <IconButton color="black">
             <InstagramIcon />
           </IconButton>
-          <IconButton color="primary">
+          <IconButton color="black">
             <YouTubeIcon />
           </IconButton>
         </SocialIcons>
@@ -149,7 +153,7 @@ const MarvelTimeline = () => {
           <img
             src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Marvel_Logo.svg"
             alt="Marvel Logo"
-            style={{ width: "200px", marginBottom: "30px" }}
+            style={{ width: "300px", marginBottom: "30px" }}
           />
           <Typography
             variant="h6"
@@ -158,6 +162,8 @@ const MarvelTimeline = () => {
               textTransform: "uppercase",
               letterSpacing: "1px",
               lineHeight: 1.4,
+              fontSize: "18px",
+              fontWeight: "bold",
             }}
           >
             How to watch every Marvel Cinematic Universe film in the perfect
@@ -194,6 +200,7 @@ const MarvelTimeline = () => {
                   color: "#e23636",
                 },
                 fontFamily: "'Helvetica', sans-serif",
+                lineHeight: 1,
               }}
             >
               {String(year).slice(-2)}
@@ -208,14 +215,18 @@ const MarvelTimeline = () => {
             flexDirection: "column",
             height: "100vh",
             overflow: "hidden",
+            padding: "10px 0",
+            gap: "40px",
           }}
         >
           <Typography
             variant="h2"
-            style={{
+            sx={{
               color: "#fff",
               fontWeight: "bold",
-              marginBottom: "40px",
+              textAlign: "center",
+              fontSize: "36px",
+              margin: "0 0 40px 0",
               flexShrink: 0,
             }}
           >
