@@ -3,7 +3,11 @@ import { Box, Typography, IconButton } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import { getMovieDetails, getMovieCredits } from "../utils/tmdbApi";
+import {
+  getMovieDetails,
+  getMovieCredits,
+  getMovieVideos,
+} from "../utils/tmdbApi";
 
 const Container = styled(Box)(({ isOpen }) => ({
   position: "fixed",
@@ -114,17 +118,30 @@ const MovieDetail = ({ movie, onClose }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [movieDetails, setMovieDetails] = useState(null);
   const [movieCredits, setMovieCredits] = useState(null);
+  const [trailer, setTrailer] = useState(null);
 
   useEffect(() => {
     const fetchMovieData = async () => {
       try {
-        const [details, credits] = await Promise.all([
+        const [details, credits, videos] = await Promise.all([
           getMovieDetails(movie.id),
           getMovieCredits(movie.id),
+          getMovieVideos(movie.id),
         ]);
 
         setMovieDetails(details);
         setMovieCredits(credits);
+
+        // Find the official trailer or first video
+        const trailerVideo =
+          videos.results.find(
+            (video) =>
+              video.type === "Trailer" &&
+              video.site === "YouTube" &&
+              video.official
+          ) || videos.results[0];
+
+        setTrailer(trailerVideo);
       } catch (error) {
         console.error("Error fetching movie data:", error);
       }
@@ -154,6 +171,12 @@ const MovieDetail = ({ movie, onClose }) => {
   const handleClose = () => {
     setIsOpen(false);
     setTimeout(onClose, 600);
+  };
+
+  const handleTrailerClick = () => {
+    if (trailer) {
+      window.open(`https://www.youtube.com/watch?v=${trailer.key}`, "_blank");
+    }
   };
 
   return (
@@ -307,14 +330,23 @@ const MovieDetail = ({ movie, onClose }) => {
           isOpen={isOpen}
         />
         <TrailerButton
+          onClick={handleTrailerClick}
           sx={{
             opacity: isOpen ? 1 : 0,
             transform: `translate(${isOpen ? "0, 0" : "100%, 0"})`,
             transition: "all 0.6s ease-in-out",
             transitionDelay: isOpen ? "0.4s" : "0s",
+            cursor: trailer ? "pointer" : "not-allowed",
+            backgroundColor: trailer ? "#e23636" : "#999",
           }}
         >
-          Watch trailer <PlayArrowIcon />
+          {trailer ? (
+            <>
+              Watch trailer <PlayArrowIcon />
+            </>
+          ) : (
+            "No trailer available"
+          )}
         </TrailerButton>
       </RightSection>
     </Container>

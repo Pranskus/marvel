@@ -132,3 +132,16 @@ export const getMovieCredits = async (movieId) => {
     throw error;
   }
 };
+
+export const getMovieVideos = async (movieId) => {
+  try {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/movie/${movieId}/videos?api_key=${process.env.REACT_APP_TMDB_API_KEY}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching movie videos:", error);
+    throw error;
+  }
+};
