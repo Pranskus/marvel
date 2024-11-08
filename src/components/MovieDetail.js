@@ -3,6 +3,7 @@ import { Box, Typography, IconButton } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import { getMovieDetails, getMovieCredits } from "../utils/tmdbApi";
 
 const Container = styled(Box)(({ isOpen }) => ({
   position: "fixed",
@@ -99,8 +100,49 @@ const CloseButton = styled(IconButton)(({ isOpen }) => ({
   },
 }));
 
+const formatCurrency = (amount) => {
+  if (!amount) return "N/A";
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(amount);
+};
+
 const MovieDetail = ({ movie, onClose }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [movieDetails, setMovieDetails] = useState(null);
+  const [movieCredits, setMovieCredits] = useState(null);
+
+  useEffect(() => {
+    const fetchMovieData = async () => {
+      try {
+        const [details, credits] = await Promise.all([
+          getMovieDetails(movie.id),
+          getMovieCredits(movie.id),
+        ]);
+
+        setMovieDetails(details);
+        setMovieCredits(credits);
+      } catch (error) {
+        console.error("Error fetching movie data:", error);
+      }
+    };
+
+    fetchMovieData();
+  }, [movie.id]);
+
+  // Helper function to get crew members by department
+  const getCrewByJob = (job) => {
+    if (!movieCredits?.crew) return "Loading...";
+    return (
+      movieCredits.crew
+        .filter((person) => person.job === job)
+        .map((person) => person.name)
+        .join(", ") || "N/A"
+    );
+  };
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -177,25 +219,71 @@ const MovieDetail = ({ movie, onClose }) => {
 
           <Box
             sx={{
+              mb: 4,
               opacity: isOpen ? 1 : 0,
               transform: `translateY(${isOpen ? "0" : "20px"})`,
               transition: "all 0.6s ease-in-out",
-              transitionDelay: "0.7s",
+              transitionDelay: "0.6s",
             }}
           >
-            <Typography
-              variant="caption"
-              sx={{ color: "#999", textTransform: "uppercase" }}
-            >
-              RELEASE DATE
-            </Typography>
-            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-              {new Date(movie.release_date).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </Typography>
+            <Box sx={{ mb: 2 }}>
+              <Typography
+                variant="caption"
+                sx={{ color: "#999", textTransform: "uppercase" }}
+              >
+                USER SCORE
+              </Typography>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: "bold",
+                  color:
+                    movieDetails?.vote_average >= 7 ? "#4CAF50" : "#FFC107",
+                }}
+              >
+                {movieDetails
+                  ? `${Math.round(movieDetails.vote_average * 10)}%`
+                  : "Loading..."}
+              </Typography>
+            </Box>
+
+            <Box sx={{ mb: 2 }}>
+              <Typography
+                variant="caption"
+                sx={{ color: "#999", textTransform: "uppercase" }}
+              >
+                DIRECTOR
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                {getCrewByJob("Director")}
+              </Typography>
+            </Box>
+
+            <Box sx={{ mb: 2 }}>
+              <Typography
+                variant="caption"
+                sx={{ color: "#999", textTransform: "uppercase" }}
+              >
+                SCREENPLAY
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                {getCrewByJob("Screenplay")}
+              </Typography>
+            </Box>
+
+            <Box>
+              <Typography
+                variant="caption"
+                sx={{ color: "#999", textTransform: "uppercase" }}
+              >
+                BOX OFFICE
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                {movieDetails
+                  ? formatCurrency(movieDetails.revenue)
+                  : "Loading..."}
+              </Typography>
+            </Box>
           </Box>
 
           <Typography
