@@ -89,7 +89,7 @@ const YearsList = styled(Box)({
     width: "60px",
     marginRight: "20px",
     height: "60vh",
-    marginTop: "20px",
+    marginTop: "40px",
   },
 });
 
@@ -145,24 +145,27 @@ const LoadingPoster = styled(Skeleton)({
   borderRadius: "8px",
 });
 
-const BigYearDisplay = styled(Box)({
-  position: "absolute",
-  left: "0",
-  transform: "translateX(0%)",
-  display: "flex",
-  pointerEvents: "none",
-  fontWeight: "bold",
-  transition: "all 0.3s ease",
-  zIndex: 2,
-  fontSize: "60px",
-  justifyContent: "flex-start",
+const BigYearDisplay = styled(Box)(
+  ({ hoveredYear, hoveredYearPosition, selectedYearPosition }) => ({
+    position: "absolute",
+    left: "0",
+    transform: "translateX(0%)",
+    display: "flex",
+    pointerEvents: "none",
+    fontWeight: "bold",
+    transition: "all 0.3s ease",
+    zIndex: 2,
+    fontSize: "60px",
+    justifyContent: "flex-start",
 
-  "@media (max-width: 900px)": {
-    fontSize: "40px",
-    transform: "translateY(-600%)",
-    top: "calc(hoveredYearPosition + 100px)",
-  },
-});
+    "@media (max-width: 900px)": {
+      fontSize: "40px",
+      transform: "translateY(-1350%)",
+      top: hoveredYear ? hoveredYearPosition : selectedYearPosition,
+      marginTop: "-20px",
+    },
+  })
+);
 
 const YearItem = styled(Box)({
   position: "relative",
@@ -382,6 +385,9 @@ const MarvelTimeline = () => {
       {/* Right Section */}
       <RightSection>
         <BigYearDisplay
+          hoveredYear={hoveredYear}
+          hoveredYearPosition={hoveredYearPosition}
+          selectedYearPosition={selectedYearPosition}
           sx={{
             top: hoveredYear ? hoveredYearPosition : selectedYearPosition,
           }}
