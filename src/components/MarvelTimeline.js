@@ -12,6 +12,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
+import Modal from "@mui/material/Modal";
+import Paper from "@mui/material/Paper";
 
 const Container = styled(Box)({
   height: "100vh",
@@ -89,7 +91,7 @@ const YearsList = styled(Box)({
     width: "60px",
     marginRight: "20px",
     height: "60vh",
-    marginTop: "40px",
+    marginTop: "10px",
   },
 });
 
@@ -160,9 +162,10 @@ const BigYearDisplay = styled(Box)(
 
     "@media (max-width: 900px)": {
       fontSize: "40px",
-      transform: "translateY(-1350%)",
+      position: "absolute",
+      left: "10px",
+      transform: "translateY(-1790%)",
       top: hoveredYear ? hoveredYearPosition : selectedYearPosition,
-      marginTop: "-20px",
     },
   })
 );
@@ -181,25 +184,25 @@ const YearItem = styled(Box)({
   },
 
   "@media (max-width: 900px)": {
-    padding: "8px 0",
+    padding: "4px 0",
   },
 });
 
-const StyledMenu = styled(Menu)({
-  "& .MuiPaper-root": {
-    backgroundColor: "#fff",
-    width: "300px",
-    maxHeight: "80vh",
-    borderRadius: "8px",
-    boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
-  },
+const MenuModal = styled(Modal)({
+  position: "absolute",
+  zIndex: 9999,
 });
 
-const StyledMenuItem = styled(MenuItem)({
-  padding: "12px 24px",
-  "&:hover": {
-    backgroundColor: "rgba(226, 54, 54, 0.08)",
-  },
+const MenuPaper = styled(Paper)({
+  position: "absolute",
+  top: "20px",
+  left: "20px",
+  width: "300px",
+  maxHeight: "80vh",
+  backgroundColor: "#fff",
+  borderRadius: "8px",
+  boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+  overflowY: "auto",
 });
 
 const YearHeader = styled(Typography)({
@@ -207,6 +210,13 @@ const YearHeader = styled(Typography)({
   color: "#e23636",
   fontWeight: "bold",
   fontSize: "18px",
+});
+
+const StyledMenuItem = styled(MenuItem)({
+  padding: "12px 24px",
+  "&:hover": {
+    backgroundColor: "rgba(226, 54, 54, 0.08)",
+  },
 });
 
 const MarvelTimeline = () => {
@@ -280,51 +290,48 @@ const MarvelTimeline = () => {
           <MenuIcon />
         </MenuButton>
 
-        <StyledMenu
-          anchorEl={menuAnchor}
+        <MenuModal
           open={Boolean(menuAnchor)}
           onClose={handleMenuClose}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
+          disablePortal={false}
+          keepMounted
         >
-          {timelineYears.map((year) => (
-            <React.Fragment key={year}>
-              <YearHeader>
-                {year} - Phase{" "}
-                {year <= 2012
-                  ? "I"
-                  : year <= 2015
-                    ? "II"
-                    : year <= 2019
-                      ? "III"
-                      : "IV"}
-              </YearHeader>
-              {menuMovies[year]?.map((movie) => (
-                <StyledMenuItem
-                  key={movie.id}
-                  onClick={() => handleMovieSelect(movie, year)}
-                >
-                  <ListItemText
-                    primary={movie.title}
-                    primaryTypographyProps={{
-                      style: {
-                        fontWeight: "500",
-                        fontSize: "15px",
-                      },
-                    }}
-                  />
-                </StyledMenuItem>
-              ))}
-              {year !== timelineYears[timelineYears.length - 1] && <Divider />}
-            </React.Fragment>
-          ))}
-        </StyledMenu>
+          <MenuPaper>
+            {timelineYears.map((year) => (
+              <React.Fragment key={year}>
+                <YearHeader>
+                  {year} - Phase{" "}
+                  {year <= 2012
+                    ? "I"
+                    : year <= 2015
+                      ? "II"
+                      : year <= 2019
+                        ? "III"
+                        : "IV"}
+                </YearHeader>
+                {menuMovies[year]?.map((movie) => (
+                  <StyledMenuItem
+                    key={movie.id}
+                    onClick={() => handleMovieSelect(movie, year)}
+                  >
+                    <ListItemText
+                      primary={movie.title}
+                      primaryTypographyProps={{
+                        style: {
+                          fontWeight: "500",
+                          fontSize: "15px",
+                        },
+                      }}
+                    />
+                  </StyledMenuItem>
+                ))}
+                {year !== timelineYears[timelineYears.length - 1] && (
+                  <Divider />
+                )}
+              </React.Fragment>
+            ))}
+          </MenuPaper>
+        </MenuModal>
 
         <Box
           sx={{
@@ -453,17 +460,35 @@ const MarvelTimeline = () => {
                 onClick={(e) => {
                   setSelectedYear(year);
                   const rect = e.currentTarget.getBoundingClientRect();
-                  setSelectedYearPosition(rect.top);
+                  if (window.innerWidth <= 900) {
+                    setSelectedYearPosition(
+                      rect.top + window.scrollY + rect.height / 2
+                    );
+                  } else {
+                    setSelectedYearPosition(rect.top);
+                  }
                 }}
                 onMouseEnter={(e) => {
                   setHoveredYear(year);
                   const rect = e.currentTarget.getBoundingClientRect();
-                  setHoveredYearPosition(rect.top);
+                  if (window.innerWidth <= 900) {
+                    setHoveredYearPosition(
+                      rect.top + window.scrollY + rect.height / 2
+                    );
+                  } else {
+                    setHoveredYearPosition(rect.top);
+                  }
                 }}
                 ref={(node) => {
                   if (node && year === selectedYear) {
                     const rect = node.getBoundingClientRect();
-                    setSelectedYearPosition(rect.top);
+                    if (window.innerWidth <= 900) {
+                      setSelectedYearPosition(
+                        rect.top + window.scrollY + rect.height / 2
+                      );
+                    } else {
+                      setSelectedYearPosition(rect.top);
+                    }
                   }
                 }}
               >
