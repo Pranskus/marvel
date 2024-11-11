@@ -13,15 +13,23 @@ import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 
-const Container = styled(Grid)({
+const Container = styled(Box)({
   height: "100vh",
   margin: 0,
   padding: 0,
   display: "flex",
   overflow: "hidden",
+  width: "100vw",
+  maxWidth: "100%",
+
+  "@media (max-width: 900px)": {
+    flexDirection: "column",
+    height: "auto",
+    overflow: "auto",
+  },
 });
 
-const LeftSection = styled(Grid)({
+const LeftSection = styled(Box)({
   backgroundColor: "#fff",
   padding: "40px",
   position: "relative",
@@ -31,6 +39,14 @@ const LeftSection = styled(Grid)({
   alignItems: "center",
   height: "100vh",
   overflow: "hidden",
+  width: "40%",
+
+  "@media (max-width: 900px)": {
+    width: "100%",
+    height: "auto",
+    minHeight: "50vh",
+    padding: "30px 20px",
+  },
 });
 
 const MenuButton = styled(IconButton)({
@@ -39,7 +55,7 @@ const MenuButton = styled(IconButton)({
   left: "20px",
 });
 
-const RightSection = styled(Grid)(({ theme }) => ({
+const RightSection = styled(Box)({
   backgroundColor: "#000",
   padding: "40px",
   display: "flex",
@@ -50,11 +66,14 @@ const RightSection = styled(Grid)(({ theme }) => ({
   overflow: "hidden",
   position: "relative",
 
-  "@media (max-width: 1200px)": {
-    padding: "30px",
-    gap: "30px",
+  "@media (max-width: 900px)": {
+    width: "100%",
+    height: "auto",
+    minHeight: "60vh",
+    padding: "20px",
+    flexDirection: "row",
   },
-}));
+});
 
 const YearsList = styled(Box)({
   display: "flex",
@@ -65,6 +84,13 @@ const YearsList = styled(Box)({
   width: "100px",
   position: "relative",
   marginRight: "40px",
+
+  "@media (max-width: 900px)": {
+    width: "60px",
+    marginRight: "20px",
+    height: "60vh",
+    marginTop: "20px",
+  },
 });
 
 const YearsContainer = styled(Box)({
@@ -94,6 +120,11 @@ const MoviePosters = styled(Box)(({ theme }) => ({
   "@media (max-width: 1200px)": {
     gridTemplateColumns: "repeat(1, 1fr)",
     gap: "30px",
+  },
+
+  "@media (max-width: 900px)": {
+    maxHeight: "calc(60vh - 120px)",
+    overflowY: "auto",
   },
 }));
 
@@ -125,6 +156,12 @@ const BigYearDisplay = styled(Box)({
   zIndex: 2,
   fontSize: "60px",
   justifyContent: "flex-start",
+
+  "@media (max-width: 900px)": {
+    fontSize: "40px",
+    transform: "translateY(-600%)",
+    top: "calc(hoveredYearPosition + 100px)",
+  },
 });
 
 const YearItem = styled(Box)({
@@ -138,6 +175,10 @@ const YearItem = styled(Box)({
   padding: "10px 0",
   "&:hover": {
     backgroundColor: "rgba(255, 255, 255, 0.02)",
+  },
+
+  "@media (max-width: 900px)": {
+    padding: "8px 0",
   },
 });
 
@@ -229,9 +270,9 @@ const MarvelTimeline = () => {
   };
 
   return (
-    <Container container>
+    <Container>
       {/* Left Section */}
-      <LeftSection item xs={5}>
+      <LeftSection>
         <MenuButton onClick={handleMenuOpen}>
           <MenuIcon />
         </MenuButton>
@@ -298,6 +339,10 @@ const MarvelTimeline = () => {
               width: "300px",
               marginBottom: "30px",
               display: "block",
+              "@media (max-width: 900px)": {
+                width: "200px",
+                marginBottom: "20px",
+              },
             }}
           />
           <Typography
@@ -311,6 +356,9 @@ const MarvelTimeline = () => {
               fontWeight: "bold",
               textAlign: "center",
               maxWidth: "80%",
+              "@media (max-width: 900px)": {
+                fontSize: "16px",
+              },
             }}
           >
             How to watch every Marvel Cinematic Universe film in the perfect
@@ -332,7 +380,7 @@ const MarvelTimeline = () => {
       </LeftSection>
 
       {/* Right Section */}
-      <RightSection item xs={7}>
+      <RightSection>
         <BigYearDisplay
           sx={{
             top: hoveredYear ? hoveredYearPosition : selectedYearPosition,
@@ -426,6 +474,9 @@ const MarvelTimeline = () => {
                     pointerEvents: "none",
                     opacity: hoveredYear === year ? 0 : 1,
                     paddingLeft: "10px",
+                    "@media (max-width: 900px)": {
+                      fontSize: "16px",
+                    },
                   }}
                 >
                   {String(year).slice(-2)}
@@ -444,6 +495,11 @@ const MarvelTimeline = () => {
             overflow: "hidden",
             padding: "10px 0",
             gap: "40px",
+            "@media (max-width: 900px)": {
+              height: "60vh",
+              minHeight: "60vh",
+              paddingTop: "20px",
+            },
           }}
         >
           <Typography
@@ -455,6 +511,10 @@ const MarvelTimeline = () => {
               fontSize: "36px",
               margin: "0 0 40px 0",
               flexShrink: 0,
+              "@media (max-width: 900px)": {
+                fontSize: "28px",
+                margin: "0 0 20px 0",
+              },
             }}
           >
             {selectedYear <= 2012
