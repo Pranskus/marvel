@@ -48,6 +48,7 @@ const RightSection = styled(Grid)(({ theme }) => ({
   width: "60%",
   height: "100vh",
   overflow: "hidden",
+  position: "relative",
 
   "@media (max-width: 1200px)": {
     padding: "30px",
@@ -61,9 +62,9 @@ const YearsList = styled(Box)({
   justifyContent: "space-between",
   height: "90vh",
   color: "#333",
-  minWidth: "40px",
-  marginRight: "10px",
+  width: "100px",
   position: "relative",
+  marginRight: "40px",
 });
 
 const YearsContainer = styled(Box)({
@@ -116,15 +117,14 @@ const LoadingPoster = styled(Skeleton)({
 const BigYearDisplay = styled(Box)({
   position: "absolute",
   left: "0",
-  right: "0",
+  transform: "translateX(0%)",
   display: "flex",
   pointerEvents: "none",
   fontWeight: "bold",
   transition: "all 0.3s ease",
   zIndex: 2,
   fontSize: "60px",
-  transform: "translateY(-30%)",
-  justifyContent: "center",
+  justifyContent: "flex-start",
 });
 
 const YearItem = styled(Box)({
@@ -132,12 +132,10 @@ const YearItem = styled(Box)({
   display: "flex",
   alignItems: "center",
   pointerEvents: "auto",
-  width: "100px",
+  width: "100%",
   cursor: "pointer",
   justifyContent: "flex-start",
-  paddingLeft: "0px",
-  marginLeft: "-10px",
-  paddingRight: "40px",
+  padding: "10px 0",
   "&:hover": {
     backgroundColor: "rgba(255, 255, 255, 0.02)",
   },
@@ -346,7 +344,6 @@ const MarvelTimeline = () => {
                 padding: "0 10px",
                 display: "flex",
                 alignItems: "center",
-                marginLeft: "-90px",
               }}
             >
               <Box
@@ -358,6 +355,7 @@ const MarvelTimeline = () => {
                   position: "relative",
                   zIndex: 3,
                   letterSpacing: "0.1em",
+                  fontSize: "inherit",
                 }}
               >
                 20
@@ -371,8 +369,8 @@ const MarvelTimeline = () => {
                 lineHeight: "0.5",
                 position: "relative",
                 zIndex: 2,
-                width: "fit-content",
                 marginLeft: "-8px",
+                fontSize: "inherit",
               }}
             >
               {hoveredYear
