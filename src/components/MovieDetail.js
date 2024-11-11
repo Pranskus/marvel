@@ -140,15 +140,15 @@ const CloseButton = styled(IconButton)(({ isOpen }) => ({
   minWidth: "40px",
   minHeight: "40px",
   borderRadius: "4px",
-  transform: `rotate(${isOpen ? "0" : "90deg"})`,
   zIndex: 1200,
   backgroundColor: "#e23636",
   color: "#fff",
   opacity: isOpen ? 1 : 0,
-  transition: "all 0.3s ease-in-out",
+  transform: `translate(${isOpen ? "0, 0" : "100%, 0"})`,
+  transition: "all 0.6s ease-in-out",
+  transitionDelay: isOpen ? "0.4s" : "0s",
   "&:hover": {
     backgroundColor: "#c62828",
-    transform: "rotate(90deg)",
   },
   "& .MuiSvgIcon-root": {
     fontSize: "20px",
