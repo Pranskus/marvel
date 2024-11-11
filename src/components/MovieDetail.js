@@ -47,14 +47,14 @@ const LeftSection = styled(Box)(({ isOpen }) => ({
   "@media (max-width: 1100px)": {
     width: "100%",
     order: 2,
-    padding: "60px 20px",
+    padding: "80px 20px 40px",
     height: "auto",
     minHeight: "50vh",
     backgroundColor: "#fff",
     position: "relative",
     zIndex: 1,
-    marginTop: "-40px",
-    borderRadius: "40px 40px 0 0",
+    marginTop: "-80px",
+    borderRadius: "80px 80px 0 0",
   },
 }));
 
@@ -75,6 +75,8 @@ const RightSection = styled(Box)(({ isOpen }) => ({
     height: "60vh",
     position: "relative",
     zIndex: 2,
+    transition: "all 0.5s ease-in-out",
+    transitionDelay: "0.4s",
   },
 }));
 
@@ -87,25 +89,13 @@ const MovieImage = styled("img")(({ isOpen }) => ({
   transform: isOpen ? "translateX(0) scale(1.05)" : "translateX(100%) scale(1)",
   transformOrigin: "center top",
   animation: isOpen ? "parallaxScroll 25s ease-out infinite alternate" : "none",
-  "@keyframes parallaxScroll": {
-    "0%": {
-      objectPosition: "center 0%",
-      transform: "translateX(0) scale(1)",
-    },
-    "100%": {
-      objectPosition: "center 10%",
-      transform: "translateX(0) scale(1.2)",
-    },
-  },
-  "&:hover": {
-    transform: isOpen ? "translateX(0) scale(1.12)" : "translateX(100%)",
-    transition: "all 0.6s ease-out",
-  },
 
   "@media (max-width: 1100px)": {
     height: "100%",
     objectPosition: "center 20%",
     animation: "none",
+    transition: "all 0.5s ease-out",
+    transform: isOpen ? "translateX(0) scale(1)" : "translateX(100%) scale(1)",
     "&:hover": {
       transform: "none",
     },
@@ -330,7 +320,7 @@ const MovieDetail = ({ movie, onClose }) => {
                   marginBottom: "60px",
                 },
                 "& .movie-title": {
-                  marginTop: "20px",
+                  marginTop: "140px",
                 },
               },
             }}
@@ -345,6 +335,9 @@ const MovieDetail = ({ movie, onClose }) => {
                 transform: `translateY(${isOpen ? "0" : "-20px"})`,
                 transition: "all 0.6s ease-in-out",
                 transitionDelay: "0.4s",
+                "@media (max-width: 1100px)": {
+                  display: "none",
+                },
               }}
             >
               <img
