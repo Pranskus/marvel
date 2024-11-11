@@ -8,6 +8,7 @@ import {
   getMovieCredits,
   getMovieVideos,
 } from "../utils/tmdbApi";
+import YouTube from "react-youtube";
 
 const Container = styled(Box)(({ isOpen }) => ({
   position: "fixed",
@@ -104,6 +105,43 @@ const CloseButton = styled(IconButton)(({ isOpen }) => ({
   },
 }));
 
+const YoutubeContainer = styled(Box)(({ isOpen }) => ({
+  position: "fixed",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: "rgba(0, 0, 0, 0.95)",
+  display: isOpen ? "flex" : "none",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 1100,
+}));
+
+const TrailerCloseButton = styled(IconButton)({
+  position: "absolute",
+  top: "40px",
+  right: "40px",
+  color: "#fff",
+  backgroundColor: "rgba(255, 255, 255, 0.1)",
+  padding: "12px",
+  "&:hover": {
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
+  "& .MuiSvgIcon-root": {
+    fontSize: "32px",
+  },
+});
+
+const PlayerWrapper = styled(Box)({
+  position: "relative",
+  width: "80%",
+  height: "80%",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+});
+
 const formatCurrency = (amount) => {
   if (!amount) return "N/A";
   return new Intl.NumberFormat("en-US", {
@@ -119,6 +157,8 @@ const MovieDetail = ({ movie, onClose }) => {
   const [movieDetails, setMovieDetails] = useState(null);
   const [movieCredits, setMovieCredits] = useState(null);
   const [trailer, setTrailer] = useState(null);
+  const [showTrailer, setShowTrailer] = useState(false);
+  const [player, setPlayer] = useState(null);
 
   useEffect(() => {
     const fetchMovieData = async () => {
@@ -175,181 +215,225 @@ const MovieDetail = ({ movie, onClose }) => {
 
   const handleTrailerClick = () => {
     if (trailer) {
-      window.open(`https://www.youtube.com/watch?v=${trailer.key}`, "_blank");
+      setShowTrailer(true);
     }
   };
 
+  const handleCloseTrailer = () => {
+    if (player) {
+      player.stopVideo(); // Stop the video when closing
+    }
+    setShowTrailer(false);
+  };
+
+  const handleBackdropClick = (event) => {
+    if (event.target === event.currentTarget) {
+      handleCloseTrailer();
+    }
+  };
+
+  const onReady = (event) => {
+    setPlayer(event.target);
+  };
+
   return (
-    <Container isOpen={isOpen}>
-      <LeftSection isOpen={isOpen}>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            maxHeight: "80vh",
-            justifyContent: "center",
-          }}
-        >
+    <>
+      <Container isOpen={isOpen}>
+        <LeftSection isOpen={isOpen}>
           <Box
             sx={{
               display: "flex",
-              justifyContent: "space-between",
-              mb: 4,
-              opacity: isOpen ? 1 : 0,
-              transform: `translateY(${isOpen ? "0" : "-20px"})`,
-              transition: "all 0.6s ease-in-out",
-              transitionDelay: "0.4s",
+              flexDirection: "column",
+              maxHeight: "80vh",
+              justifyContent: "center",
             }}
           >
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Marvel_Logo.svg"
-              alt="Marvel Logo"
-              style={{ width: "120px" }}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mb: 4,
+                opacity: isOpen ? 1 : 0,
+                transform: `translateY(${isOpen ? "0" : "-20px"})`,
+                transition: "all 0.6s ease-in-out",
+                transitionDelay: "0.4s",
+              }}
+            >
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Marvel_Logo.svg"
+                alt="Marvel Logo"
+                style={{ width: "120px" }}
+              />
+              <CloseButton onClick={handleClose} isOpen={isOpen}>
+                <CloseIcon />
+              </CloseButton>
+            </Box>
+
+            <Typography
+              variant="h3"
+              sx={{
+                mb: 3,
+                fontWeight: "bold",
+                opacity: isOpen ? 1 : 0,
+                transform: `translateY(${isOpen ? "0" : "20px"})`,
+                transition: "all 0.6s ease-in-out",
+                transitionDelay: "0.5s",
+              }}
+            >
+              {movie.title}
+            </Typography>
+
+            <Typography
+              variant="body1"
+              sx={{
+                mb: 4,
+                color: "#666",
+                lineHeight: 1.6,
+                opacity: isOpen ? 1 : 0,
+                transform: `translateY(${isOpen ? "0" : "20px"})`,
+                transition: "all 0.6s ease-in-out",
+                transitionDelay: "0.6s",
+              }}
+            >
+              {movie.overview}
+            </Typography>
+
+            <Box
+              sx={{
+                mb: 4,
+                opacity: isOpen ? 1 : 0,
+                transform: `translateY(${isOpen ? "0" : "20px"})`,
+                transition: "all 0.6s ease-in-out",
+                transitionDelay: "0.6s",
+              }}
+            >
+              <Box sx={{ mb: 2 }}>
+                <Typography
+                  variant="caption"
+                  sx={{ color: "#999", textTransform: "uppercase" }}
+                >
+                  USER SCORE
+                </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: "bold",
+                    color:
+                      movieDetails?.vote_average >= 7 ? "#4CAF50" : "#FFC107",
+                  }}
+                >
+                  {movieDetails
+                    ? `${Math.round(movieDetails.vote_average * 10)}%`
+                    : "Loading..."}
+                </Typography>
+              </Box>
+
+              <Box sx={{ mb: 2 }}>
+                <Typography
+                  variant="caption"
+                  sx={{ color: "#999", textTransform: "uppercase" }}
+                >
+                  DIRECTOR
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  {getCrewByJob("Director")}
+                </Typography>
+              </Box>
+
+              <Box sx={{ mb: 2 }}>
+                <Typography
+                  variant="caption"
+                  sx={{ color: "#999", textTransform: "uppercase" }}
+                >
+                  SCREENPLAY
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  {getCrewByJob("Screenplay")}
+                </Typography>
+              </Box>
+
+              <Box>
+                <Typography
+                  variant="caption"
+                  sx={{ color: "#999", textTransform: "uppercase" }}
+                >
+                  BOX OFFICE
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                  {movieDetails
+                    ? formatCurrency(movieDetails.revenue)
+                    : "Loading..."}
+                </Typography>
+              </Box>
+            </Box>
+
+            <Typography
+              sx={{
+                mt: 4,
+                color: "#999",
+                opacity: isOpen ? 1 : 0,
+                transition: "opacity 0.6s ease-in-out",
+                transitionDelay: "0.8s",
+              }}
+            >
+              Enjoy your Marvel movie experience!
+            </Typography>
+          </Box>
+        </LeftSection>
+
+        <RightSection isOpen={isOpen}>
+          <MovieImage
+            src={movie.backdrop_path || movie.poster_path}
+            alt={movie.title}
+            isOpen={isOpen}
+          />
+          <TrailerButton
+            onClick={handleTrailerClick}
+            sx={{
+              opacity: isOpen ? 1 : 0,
+              transform: `translate(${isOpen ? "0, 0" : "100%, 0"})`,
+              transition: "all 0.6s ease-in-out",
+              transitionDelay: isOpen ? "0.4s" : "0s",
+              cursor: trailer ? "pointer" : "not-allowed",
+              backgroundColor: trailer ? "#e23636" : "#999",
+            }}
+          >
+            {trailer ? (
+              <>
+                Watch trailer <PlayArrowIcon />
+              </>
+            ) : (
+              "No trailer available"
+            )}
+          </TrailerButton>
+        </RightSection>
+      </Container>
+
+      <YoutubeContainer isOpen={showTrailer} onClick={handleBackdropClick}>
+        <TrailerCloseButton onClick={handleCloseTrailer}>
+          <CloseIcon />
+        </TrailerCloseButton>
+        {trailer && (
+          <PlayerWrapper>
+            <YouTube
+              videoId={trailer.key}
+              opts={{
+                width: "100%",
+                height: "100%",
+                playerVars: {
+                  autoplay: 0, // Changed to 0 to prevent autoplay
+                  modestbranding: 1,
+                  rel: 0,
+                  controls: 1,
+                },
+              }}
+              onReady={onReady}
+              style={{ width: "100%", height: "100%" }}
             />
-            <CloseButton onClick={handleClose} isOpen={isOpen}>
-              <CloseIcon />
-            </CloseButton>
-          </Box>
-
-          <Typography
-            variant="h3"
-            sx={{
-              mb: 3,
-              fontWeight: "bold",
-              opacity: isOpen ? 1 : 0,
-              transform: `translateY(${isOpen ? "0" : "20px"})`,
-              transition: "all 0.6s ease-in-out",
-              transitionDelay: "0.5s",
-            }}
-          >
-            {movie.title}
-          </Typography>
-
-          <Typography
-            variant="body1"
-            sx={{
-              mb: 4,
-              color: "#666",
-              lineHeight: 1.6,
-              opacity: isOpen ? 1 : 0,
-              transform: `translateY(${isOpen ? "0" : "20px"})`,
-              transition: "all 0.6s ease-in-out",
-              transitionDelay: "0.6s",
-            }}
-          >
-            {movie.overview}
-          </Typography>
-
-          <Box
-            sx={{
-              mb: 4,
-              opacity: isOpen ? 1 : 0,
-              transform: `translateY(${isOpen ? "0" : "20px"})`,
-              transition: "all 0.6s ease-in-out",
-              transitionDelay: "0.6s",
-            }}
-          >
-            <Box sx={{ mb: 2 }}>
-              <Typography
-                variant="caption"
-                sx={{ color: "#999", textTransform: "uppercase" }}
-              >
-                USER SCORE
-              </Typography>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: "bold",
-                  color:
-                    movieDetails?.vote_average >= 7 ? "#4CAF50" : "#FFC107",
-                }}
-              >
-                {movieDetails
-                  ? `${Math.round(movieDetails.vote_average * 10)}%`
-                  : "Loading..."}
-              </Typography>
-            </Box>
-
-            <Box sx={{ mb: 2 }}>
-              <Typography
-                variant="caption"
-                sx={{ color: "#999", textTransform: "uppercase" }}
-              >
-                DIRECTOR
-              </Typography>
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                {getCrewByJob("Director")}
-              </Typography>
-            </Box>
-
-            <Box sx={{ mb: 2 }}>
-              <Typography
-                variant="caption"
-                sx={{ color: "#999", textTransform: "uppercase" }}
-              >
-                SCREENPLAY
-              </Typography>
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                {getCrewByJob("Screenplay")}
-              </Typography>
-            </Box>
-
-            <Box>
-              <Typography
-                variant="caption"
-                sx={{ color: "#999", textTransform: "uppercase" }}
-              >
-                BOX OFFICE
-              </Typography>
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                {movieDetails
-                  ? formatCurrency(movieDetails.revenue)
-                  : "Loading..."}
-              </Typography>
-            </Box>
-          </Box>
-
-          <Typography
-            sx={{
-              mt: 4,
-              color: "#999",
-              opacity: isOpen ? 1 : 0,
-              transition: "opacity 0.6s ease-in-out",
-              transitionDelay: "0.8s",
-            }}
-          >
-            Enjoy your Marvel movie experience!
-          </Typography>
-        </Box>
-      </LeftSection>
-
-      <RightSection isOpen={isOpen}>
-        <MovieImage
-          src={movie.backdrop_path || movie.poster_path}
-          alt={movie.title}
-          isOpen={isOpen}
-        />
-        <TrailerButton
-          onClick={handleTrailerClick}
-          sx={{
-            opacity: isOpen ? 1 : 0,
-            transform: `translate(${isOpen ? "0, 0" : "100%, 0"})`,
-            transition: "all 0.6s ease-in-out",
-            transitionDelay: isOpen ? "0.4s" : "0s",
-            cursor: trailer ? "pointer" : "not-allowed",
-            backgroundColor: trailer ? "#e23636" : "#999",
-          }}
-        >
-          {trailer ? (
-            <>
-              Watch trailer <PlayArrowIcon />
-            </>
-          ) : (
-            "No trailer available"
-          )}
-        </TrailerButton>
-      </RightSection>
-    </Container>
+          </PlayerWrapper>
+        )}
+      </YoutubeContainer>
+    </>
   );
 };
 
