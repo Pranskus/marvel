@@ -22,6 +22,13 @@ const Container = styled(Box)(({ isOpen }) => ({
   opacity: isOpen ? 1 : 0,
   transition: "opacity 0.4s ease-in-out",
   visibility: isOpen ? "visible" : "hidden",
+
+  "@media (max-width: 1100px)": {
+    flexDirection: "column",
+    overflowY: "auto",
+    height: "auto",
+    minHeight: "100%",
+  },
 }));
 
 const LeftSection = styled(Box)(({ isOpen }) => ({
@@ -36,6 +43,19 @@ const LeftSection = styled(Box)(({ isOpen }) => ({
   transitionDelay: isOpen ? "0.2s" : "0s",
   justifyContent: "center",
   height: "100%",
+
+  "@media (max-width: 1100px)": {
+    width: "100%",
+    order: 2,
+    padding: "60px 20px",
+    height: "auto",
+    minHeight: "50vh",
+    backgroundColor: "#fff",
+    position: "relative",
+    zIndex: 1,
+    marginTop: "-40px",
+    borderRadius: "40px 40px 0 0",
+  },
 }));
 
 const RightSection = styled(Box)(({ isOpen }) => ({
@@ -48,6 +68,14 @@ const RightSection = styled(Box)(({ isOpen }) => ({
   transitionDelay: isOpen ? "0.2s" : "0s",
   backgroundColor: "#000",
   padding: 0,
+
+  "@media (max-width: 1100px)": {
+    width: "100%",
+    order: 1,
+    height: "60vh",
+    position: "relative",
+    zIndex: 2,
+  },
 }));
 
 const MovieImage = styled("img")(({ isOpen }) => ({
@@ -73,6 +101,15 @@ const MovieImage = styled("img")(({ isOpen }) => ({
     transform: isOpen ? "translateX(0) scale(1.12)" : "translateX(100%)",
     transition: "all 0.6s ease-out",
   },
+
+  "@media (max-width: 1100px)": {
+    height: "100%",
+    objectPosition: "center 20%",
+    animation: "none",
+    "&:hover": {
+      transform: "none",
+    },
+  },
 }));
 
 const TrailerButton = styled(Box)({
@@ -94,14 +131,49 @@ const TrailerButton = styled(Box)({
     transform: "translateY(-3px)",
     boxShadow: "0 4px 12px rgba(226, 54, 54, 0.3)",
   },
+
+  "@media (max-width: 1100px)": {
+    bottom: "20px",
+    right: "20px",
+    padding: "8px 16px",
+    fontSize: "14px",
+  },
 });
 
 const CloseButton = styled(IconButton)(({ isOpen }) => ({
-  opacity: isOpen ? 1 : 0,
+  position: "fixed",
+  right: "40px",
+  top: "40px",
+  width: "40px",
+  height: "40px",
+  padding: 0,
+  minWidth: "40px",
+  minHeight: "40px",
+  borderRadius: "4px",
   transform: `rotate(${isOpen ? "0" : "90deg"})`,
+  zIndex: 1200,
+  backgroundColor: "#e23636",
+  color: "#fff",
+  opacity: isOpen ? 1 : 0,
   transition: "all 0.3s ease-in-out",
   "&:hover": {
+    backgroundColor: "#c62828",
     transform: "rotate(90deg)",
+  },
+  "& .MuiSvgIcon-root": {
+    fontSize: "20px",
+  },
+
+  "@media (max-width: 1100px)": {
+    right: "20px",
+    top: "20px",
+    width: "36px",
+    height: "36px",
+    minWidth: "36px",
+    minHeight: "36px",
+    "& .MuiSvgIcon-root": {
+      fontSize: "18px",
+    },
   },
 }));
 
@@ -116,6 +188,10 @@ const YoutubeContainer = styled(Box)(({ isOpen }) => ({
   justifyContent: "center",
   alignItems: "center",
   zIndex: 1100,
+
+  "@media (max-width: 1100px)": {
+    padding: "0 20px",
+  },
 }));
 
 const TrailerCloseButton = styled(IconButton)({
@@ -239,19 +315,31 @@ const MovieDetail = ({ movie, onClose }) => {
   return (
     <>
       <Container isOpen={isOpen}>
+        <CloseButton onClick={handleClose} isOpen={isOpen}>
+          <CloseIcon />
+        </CloseButton>
         <LeftSection isOpen={isOpen}>
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
-              maxHeight: "80vh",
-              justifyContent: "center",
+              "@media (max-width: 1100px)": {
+                paddingTop: "40px",
+                paddingBottom: "40px",
+                "& .marvel-logo": {
+                  marginBottom: "60px",
+                },
+                "& .movie-title": {
+                  marginTop: "20px",
+                },
+              },
             }}
           >
             <Box
+              className="marvel-logo"
               sx={{
                 display: "flex",
-                justifyContent: "space-between",
+                justifyContent: "flex-start",
                 mb: 4,
                 opacity: isOpen ? 1 : 0,
                 transform: `translateY(${isOpen ? "0" : "-20px"})`,
@@ -264,12 +352,10 @@ const MovieDetail = ({ movie, onClose }) => {
                 alt="Marvel Logo"
                 style={{ width: "120px" }}
               />
-              <CloseButton onClick={handleClose} isOpen={isOpen}>
-                <CloseIcon />
-              </CloseButton>
             </Box>
 
             <Typography
+              className="movie-title"
               variant="h3"
               sx={{
                 mb: 3,
@@ -278,6 +364,10 @@ const MovieDetail = ({ movie, onClose }) => {
                 transform: `translateY(${isOpen ? "0" : "20px"})`,
                 transition: "all 0.6s ease-in-out",
                 transitionDelay: "0.5s",
+                "@media (max-width: 1100px)": {
+                  fontSize: "24px",
+                  mb: 2,
+                },
               }}
             >
               {movie.title}

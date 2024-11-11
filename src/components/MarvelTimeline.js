@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Box, Typography, Grid, IconButton, Skeleton } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -164,7 +164,7 @@ const BigYearDisplay = styled(Box)(
       fontSize: "40px",
       position: "absolute",
       left: "10px",
-      transform: "translateY(-1790%)",
+      transform: "translateY(-2400%)",
       top: hoveredYear ? hoveredYearPosition : selectedYearPosition,
     },
   })
@@ -229,6 +229,7 @@ const MarvelTimeline = () => {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [menuMovies, setMenuMovies] = useState({});
+  const moviePostersRef = useRef(null);
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -262,6 +263,12 @@ const MarvelTimeline = () => {
 
     fetchAllMovies();
   }, []);
+
+  useEffect(() => {
+    if (moviePostersRef.current) {
+      moviePostersRef.current.scrollTop = 0;
+    }
+  }, [selectedYear]);
 
   const timelineYears = [
     2008, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021,
@@ -557,7 +564,7 @@ const MarvelTimeline = () => {
                   : "PHASE IV"}
           </Typography>
 
-          <MoviePosters>
+          <MoviePosters ref={moviePostersRef}>
             {loading ? (
               <>
                 <LoadingPoster variant="rectangular" animation="wave" />
