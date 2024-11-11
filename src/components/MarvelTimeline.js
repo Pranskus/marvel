@@ -28,7 +28,7 @@ const LeftSection = styled(Grid)({
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
-  alignItems: "flex-start",
+  alignItems: "center",
   height: "100vh",
   overflow: "hidden",
 });
@@ -284,15 +284,21 @@ const MarvelTimeline = () => {
 
         <Box
           sx={{
-            textAlign: "left",
+            textAlign: "center",
             maxWidth: "400px",
-            marginLeft: "60px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
           <img
             src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Marvel_Logo.svg"
             alt="Marvel Logo"
-            style={{ width: "300px", marginBottom: "30px", display: "block" }}
+            style={{
+              width: "300px",
+              marginBottom: "30px",
+              display: "block",
+            }}
           />
           <Typography
             variant="h6"
@@ -303,7 +309,8 @@ const MarvelTimeline = () => {
               lineHeight: 1.4,
               fontSize: "18px",
               fontWeight: "bold",
-              textAlign: "left",
+              textAlign: "center",
+              maxWidth: "80%",
             }}
           >
             How to watch every Marvel Cinematic Universe film in the perfect
