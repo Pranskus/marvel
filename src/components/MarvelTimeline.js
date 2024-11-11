@@ -39,7 +39,7 @@ const MenuButton = styled(IconButton)({
   left: "20px",
 });
 
-const RightSection = styled(Grid)({
+const RightSection = styled(Grid)(({ theme }) => ({
   backgroundColor: "#000",
   padding: "40px",
   display: "flex",
@@ -48,7 +48,12 @@ const RightSection = styled(Grid)({
   width: "60%",
   height: "100vh",
   overflow: "hidden",
-});
+
+  "@media (max-width: 1200px)": {
+    padding: "30px",
+    gap: "30px",
+  },
+}));
 
 const YearsList = styled(Box)({
   display: "flex",
@@ -70,7 +75,7 @@ const YearsContainer = styled(Box)({
   pointerEvents: "none",
 });
 
-const MoviePosters = styled(Box)({
+const MoviePosters = styled(Box)(({ theme }) => ({
   display: "grid",
   gridTemplateColumns: "repeat(2, 1fr)",
   gap: "40px",
@@ -84,11 +89,16 @@ const MoviePosters = styled(Box)({
   },
   msOverflowStyle: "none",
   scrollbarWidth: "none",
-});
+
+  "@media (max-width: 1200px)": {
+    gridTemplateColumns: "repeat(1, 1fr)",
+    gap: "30px",
+  },
+}));
 
 const MoviePoster = styled("img")({
   width: "100%",
-  height: "auto",
+  aspectRatio: "2/3",
   borderRadius: "8px",
   transition: "transform 0.3s ease",
   objectFit: "cover",
