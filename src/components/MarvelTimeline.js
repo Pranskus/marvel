@@ -159,7 +159,7 @@ const BigYearDisplay = styled(Box)(
       fontSize: "40px",
       position: "absolute",
       left: "10px",
-      transform: "translateY(-2400%)",
+      transform: "translateY(-1720%)",
       top: hoveredYear ? hoveredYearPosition : selectedYearPosition,
     },
   })
@@ -462,10 +462,10 @@ const MarvelTimeline = () => {
                 onClick={(e) => {
                   setSelectedYear(year);
                   const rect = e.currentTarget.getBoundingClientRect();
+                  const scrollTop =
+                    window.pageYOffset || document.documentElement.scrollTop;
                   if (window.innerWidth <= 900) {
-                    setSelectedYearPosition(
-                      rect.top + window.scrollY + rect.height / 2
-                    );
+                    setSelectedYearPosition(rect.top + scrollTop);
                   } else {
                     setSelectedYearPosition(rect.top);
                   }
@@ -473,10 +473,10 @@ const MarvelTimeline = () => {
                 onMouseEnter={(e) => {
                   setHoveredYear(year);
                   const rect = e.currentTarget.getBoundingClientRect();
+                  const scrollTop =
+                    window.pageYOffset || document.documentElement.scrollTop;
                   if (window.innerWidth <= 900) {
-                    setHoveredYearPosition(
-                      rect.top + window.scrollY + rect.height / 2
-                    );
+                    setHoveredYearPosition(rect.top + scrollTop);
                   } else {
                     setHoveredYearPosition(rect.top);
                   }
@@ -484,10 +484,10 @@ const MarvelTimeline = () => {
                 ref={(node) => {
                   if (node && year === selectedYear) {
                     const rect = node.getBoundingClientRect();
+                    const scrollTop =
+                      window.pageYOffset || document.documentElement.scrollTop;
                     if (window.innerWidth <= 900) {
-                      setSelectedYearPosition(
-                        rect.top + window.scrollY + rect.height / 2
-                      );
+                      setSelectedYearPosition(rect.top + scrollTop);
                     } else {
                       setSelectedYearPosition(rect.top);
                     }
