@@ -87,7 +87,9 @@ const RightSection = styled(Box)(({ isOpen }) => ({
   "@media (max-width: 1100px)": {
     width: "100%",
     order: 1,
-    height: "60vh",
+    height: "70vh",
+    minHeight: "300px",
+    maxHeight: "400px",
     position: "relative",
     zIndex: 2,
     transition: "all 0.5s ease-in-out",
@@ -107,6 +109,7 @@ const MovieImage = styled("img")(({ isOpen }) => ({
 
   "@media (max-width: 1100px)": {
     height: "100%",
+    width: "100%",
     objectPosition: "center 20%",
     animation: "none",
     transition: "all 0.5s ease-out",
