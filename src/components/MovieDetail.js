@@ -218,6 +218,27 @@ const formatCurrency = (amount) => {
   }).format(amount);
 };
 
+const PosterContainer = styled(Box)(({ isOpen }) => ({
+  position: "fixed",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: "rgba(0, 0, 0, 0.95)",
+  display: isOpen ? "flex" : "none",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 1300,
+  cursor: "pointer",
+}));
+
+const FullscreenPoster = styled("img")({
+  maxWidth: "95vw",
+  maxHeight: "95vh",
+  objectFit: "contain",
+  cursor: "default",
+});
+
 const MovieDetail = ({ movie, onClose }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [movieDetails, setMovieDetails] = useState(null);
@@ -225,6 +246,7 @@ const MovieDetail = ({ movie, onClose }) => {
   const [trailer, setTrailer] = useState(null);
   const [showTrailer, setShowTrailer] = useState(false);
   const [player, setPlayer] = useState(null);
+  const [showFullPoster, setShowFullPoster] = useState(false);
 
   useEffect(() => {
     const fetchMovieData = async () => {
@@ -300,6 +322,15 @@ const MovieDetail = ({ movie, onClose }) => {
 
   const onReady = (event) => {
     setPlayer(event.target);
+  };
+
+  const handlePosterClick = (e) => {
+    e.stopPropagation();
+    setShowFullPoster(true);
+  };
+
+  const handleClosePoster = () => {
+    setShowFullPoster(false);
   };
 
   return (
@@ -469,6 +500,8 @@ const MovieDetail = ({ movie, onClose }) => {
             src={movie.backdrop_path || movie.poster_path}
             alt={movie.title}
             isOpen={isOpen}
+            onClick={handlePosterClick}
+            sx={{ cursor: "pointer" }}
           />
           <TrailerButton
             onClick={handleTrailerClick}
@@ -491,6 +524,27 @@ const MovieDetail = ({ movie, onClose }) => {
           </TrailerButton>
         </RightSection>
       </Container>
+
+      <PosterContainer isOpen={showFullPoster} onClick={handleClosePoster}>
+        <CloseButton
+          onClick={handleClosePoster}
+          isOpen={showFullPoster}
+          sx={{
+            position: "absolute",
+            top: "40px",
+            right: "40px",
+            transform: "none",
+            opacity: 1,
+          }}
+        >
+          <CloseIcon />
+        </CloseButton>
+        <FullscreenPoster
+          src={movie.backdrop_path || movie.poster_path}
+          alt={movie.title}
+          onClick={(e) => e.stopPropagation()}
+        />
+      </PosterContainer>
 
       <YoutubeContainer isOpen={showTrailer} onClick={handleBackdropClick}>
         <TrailerCloseButton onClick={handleCloseTrailer}>
