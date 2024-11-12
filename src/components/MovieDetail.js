@@ -41,8 +41,22 @@ const LeftSection = styled(Box)(({ isOpen }) => ({
   transform: `translateX(${isOpen ? "0" : "-100%"})`,
   transition: "all 0.6s ease-in-out",
   transitionDelay: isOpen ? "0.2s" : "0s",
-  justifyContent: "center",
-  height: "100%",
+  height: "100vh",
+  overflow: "auto",
+  scrollbarWidth: "thin",
+  "&::-webkit-scrollbar": {
+    width: "8px",
+  },
+  "&::-webkit-scrollbar-track": {
+    background: "#f1f1f1",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    background: "#888",
+    borderRadius: "4px",
+  },
+  "&::-webkit-scrollbar-thumb:hover": {
+    background: "#555",
+  },
 
   "@media (max-width: 1100px)": {
     width: "100%",
@@ -55,6 +69,7 @@ const LeftSection = styled(Box)(({ isOpen }) => ({
     zIndex: 1,
     marginTop: "-80px",
     borderRadius: "80px 80px 0 0",
+    overflow: "visible",
   },
 }));
 
@@ -344,9 +359,11 @@ const MovieDetail = ({ movie, onClose }) => {
             sx={{
               display: "flex",
               flexDirection: "column",
+              paddingTop: "40px",
+              paddingBottom: "40px",
+              height: "auto",
               "@media (max-width: 1100px)": {
                 paddingTop: "40px",
-                paddingBottom: "40px",
                 "& .marvel-logo": {
                   marginBottom: "60px",
                 },
