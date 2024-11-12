@@ -61,14 +61,14 @@ const LeftSection = styled(Box)(({ isOpen }) => ({
   "@media (max-width: 1100px)": {
     width: "100%",
     order: 2,
-    padding: "80px 20px 40px",
+    padding: "40px 20px 40px",
     height: "auto",
     minHeight: "50vh",
     backgroundColor: "#fff",
     position: "relative",
     zIndex: 1,
-    marginTop: "-80px",
-    borderRadius: "80px 80px 0 0",
+    marginTop: "-20px",
+    borderRadius: "40px 40px 0 0",
     overflow: "visible",
   },
 }));
@@ -363,12 +363,12 @@ const MovieDetail = ({ movie, onClose }) => {
               paddingBottom: "40px",
               height: "auto",
               "@media (max-width: 1100px)": {
-                paddingTop: "40px",
+                paddingTop: "10px",
                 "& .marvel-logo": {
                   marginBottom: "60px",
                 },
                 "& .movie-title": {
-                  marginTop: "140px",
+                  marginTop: "10px",
                 },
               },
             }}
