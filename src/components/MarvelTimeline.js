@@ -1,14 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Box, Typography, Grid, IconButton, Skeleton } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import TwitterIcon from "@mui/icons-material/Twitter";
-import InstagramIcon from "@mui/icons-material/Instagram";
-import YouTubeIcon from "@mui/icons-material/YouTube";
 import MenuIcon from "@mui/icons-material/Menu";
 import { getMarvelPhaseOneMovies } from "../utils/tmdbApi";
 import MovieDetail from "./MovieDetail";
-import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
