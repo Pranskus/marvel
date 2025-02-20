@@ -16,10 +16,7 @@ const options: RequestInit = {
   },
 };
 
-// MCU movies by year with their TMDB IDs
-const MCU_MOVIES: MCUMoviesByYear = {
-  // ... existing MCU_MOVIES object ...
-};
+const MCU_MOVIES: MCUMoviesByYear = {};
 
 export const getMarvelPhaseOneMovies = async (
   year: number

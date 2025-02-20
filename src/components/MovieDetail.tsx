@@ -288,7 +288,6 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
         setMovieDetails(details);
         setMovieCredits(credits);
 
-        // Find the official trailer or first video
         const trailerVideo =
           videos.results.find(
             (video) =>
@@ -306,7 +305,6 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
     fetchMovieData();
   }, [movie.id]);
 
-  // Helper function to get crew members by department
   const getCrewByJob = (job: string): string => {
     if (!movieCredits?.crew) return "Loading...";
     return (
@@ -337,7 +335,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
 
   const handleCloseTrailer = (): void => {
     if (player) {
-      player.stopVideo(); // Stop the video when closing
+      player.stopVideo();
     }
     setShowTrailer(false);
   };
@@ -594,7 +592,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
                 width: "100%",
                 height: "100%",
                 playerVars: {
-                  autoplay: 0, // Changed to 0 to prevent autoplay
+                  autoplay: 0,
                   modestbranding: 1,
                   rel: 0,
                   controls: 1,

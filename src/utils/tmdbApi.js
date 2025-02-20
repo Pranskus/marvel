@@ -9,7 +9,6 @@ const options = {
   },
 };
 
-// MCU movies by year with their TMDB IDs
 const MCU_MOVIES = {
   2008: [
     { id: 1726, title: "Iron Man" },
@@ -72,10 +71,8 @@ const MCU_MOVIES = {
 
 export const getMarvelPhaseOneMovies = async (year) => {
   try {
-    // Get the MCU movies for the selected year
     const yearMovies = MCU_MOVIES[year] || [];
 
-    // Fetch details for each movie
     const moviePromises = yearMovies.map(async (movie) => {
       const response = await fetch(
         `${TMDB_BASE_URL}/movie/${movie.id}`,
