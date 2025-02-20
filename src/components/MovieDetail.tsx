@@ -3,14 +3,24 @@ import { Box, Typography, IconButton } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import CloseIcon from "@mui/icons-material/Close";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import YouTube, { YouTubeEvent, YouTubePlayer } from "react-youtube";
+import { Movie, MovieVideo, MovieCredits } from "../types/movie";
 import {
   getMovieDetails,
   getMovieCredits,
   getMovieVideos,
 } from "../utils/tmdbApi";
-import YouTube from "react-youtube";
 
-const Container = styled(Box)(({ isOpen }) => ({
+interface MovieDetailProps {
+  movie: Movie;
+  onClose: () => void;
+}
+
+interface StyledComponentProps {
+  isOpen: boolean;
+}
+
+const Container = styled(Box)<StyledComponentProps>(({ isOpen }) => ({
   position: "fixed",
   top: 0,
   left: 0,
@@ -31,7 +41,7 @@ const Container = styled(Box)(({ isOpen }) => ({
   },
 }));
 
-const LeftSection = styled(Box)(({ isOpen }) => ({
+const LeftSection = styled(Box)<StyledComponentProps>(({ isOpen }) => ({
   width: "43%",
   padding: "40px",
   display: "flex",
@@ -73,7 +83,7 @@ const LeftSection = styled(Box)(({ isOpen }) => ({
   },
 }));
 
-const RightSection = styled(Box)(({ isOpen }) => ({
+const RightSection = styled(Box)<StyledComponentProps>(({ isOpen }) => ({
   width: "60%",
   position: "relative",
   overflow: "hidden",
@@ -97,7 +107,7 @@ const RightSection = styled(Box)(({ isOpen }) => ({
   },
 }));
 
-const MovieImage = styled("img")(({ isOpen }) => ({
+const MovieImage = styled("img")<StyledComponentProps>(({ isOpen }) => ({
   width: "100%",
   height: "105%",
   objectFit: "cover",
@@ -148,7 +158,7 @@ const TrailerButton = styled(Box)({
   },
 });
 
-const CloseButton = styled(IconButton)(({ isOpen }) => ({
+const CloseButton = styled(IconButton)<StyledComponentProps>(({ isOpen }) => ({
   position: "fixed",
   right: "40px",
   top: "40px",
@@ -185,7 +195,7 @@ const CloseButton = styled(IconButton)(({ isOpen }) => ({
   },
 }));
 
-const YoutubeContainer = styled(Box)(({ isOpen }) => ({
+const YoutubeContainer = styled(Box)<StyledComponentProps>(({ isOpen }) => ({
   position: "fixed",
   top: 0,
   left: 0,
@@ -226,7 +236,7 @@ const PlayerWrapper = styled(Box)({
   alignItems: "center",
 });
 
-const formatCurrency = (amount) => {
+const formatCurrency = (amount: number | undefined): string => {
   if (!amount) return "N/A";
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -236,7 +246,7 @@ const formatCurrency = (amount) => {
   }).format(amount);
 };
 
-const PosterContainer = styled(Box)(({ isOpen }) => ({
+const PosterContainer = styled(Box)<StyledComponentProps>(({ isOpen }) => ({
   position: "fixed",
   top: 0,
   left: 0,
@@ -257,14 +267,14 @@ const FullscreenPoster = styled("img")({
   cursor: "default",
 });
 
-const MovieDetail = ({ movie, onClose }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [movieDetails, setMovieDetails] = useState(null);
-  const [movieCredits, setMovieCredits] = useState(null);
-  const [trailer, setTrailer] = useState(null);
-  const [showTrailer, setShowTrailer] = useState(false);
-  const [player, setPlayer] = useState(null);
-  const [showFullPoster, setShowFullPoster] = useState(false);
+const MovieDetail: React.FC<MovieDetailProps> = ({ movie, onClose }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [movieDetails, setMovieDetails] = useState<Movie | null>(null);
+  const [movieCredits, setMovieCredits] = useState<MovieCredits | null>(null);
+  const [trailer, setTrailer] = useState<MovieVideo | null>(null);
+  const [showTrailer, setShowTrailer] = useState<boolean>(false);
+  const [player, setPlayer] = useState<YouTubePlayer | null>(null);
+  const [showFullPoster, setShowFullPoster] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchMovieData = async () => {
@@ -297,7 +307,7 @@ const MovieDetail = ({ movie, onClose }) => {
   }, [movie.id]);
 
   // Helper function to get crew members by department
-  const getCrewByJob = (job) => {
+  const getCrewByJob = (job: string): string => {
     if (!movieCredits?.crew) return "Loading...";
     return (
       movieCredits.crew
@@ -314,40 +324,42 @@ const MovieDetail = ({ movie, onClose }) => {
     return () => setIsOpen(false);
   }, []);
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setIsOpen(false);
     setTimeout(onClose, 600);
   };
 
-  const handleTrailerClick = () => {
+  const handleTrailerClick = (): void => {
     if (trailer) {
       setShowTrailer(true);
     }
   };
 
-  const handleCloseTrailer = () => {
+  const handleCloseTrailer = (): void => {
     if (player) {
       player.stopVideo(); // Stop the video when closing
     }
     setShowTrailer(false);
   };
 
-  const handleBackdropClick = (event) => {
+  const handleBackdropClick = (
+    event: React.MouseEvent<HTMLDivElement>
+  ): void => {
     if (event.target === event.currentTarget) {
       handleCloseTrailer();
     }
   };
 
-  const onReady = (event) => {
+  const onReady = (event: YouTubeEvent): void => {
     setPlayer(event.target);
   };
 
-  const handlePosterClick = (e) => {
+  const handlePosterClick = (e: React.MouseEvent): void => {
     e.stopPropagation();
     setShowFullPoster(true);
   };
 
-  const handleClosePoster = () => {
+  const handleClosePoster = (): void => {
     setShowFullPoster(false);
   };
 
@@ -453,10 +465,14 @@ const MovieDetail = ({ movie, onClose }) => {
                   sx={{
                     fontWeight: "bold",
                     color:
-                      movieDetails?.vote_average >= 7 ? "#4CAF50" : "#FFC107",
+                      movieDetails && movieDetails.vote_average
+                        ? movieDetails.vote_average >= 7
+                          ? "#4CAF50"
+                          : "#FFC107"
+                        : "#FFC107",
                   }}
                 >
-                  {movieDetails
+                  {movieDetails && movieDetails.vote_average
                     ? `${Math.round(movieDetails.vote_average * 10)}%`
                     : "Loading..."}
                 </Typography>

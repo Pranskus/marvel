@@ -9,6 +9,22 @@ import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import Modal from "@mui/material/Modal";
 import Paper from "@mui/material/Paper";
+import { Movie } from "../types/movie";
+import { SxProps, Theme } from "@mui/material/styles";
+
+interface StyledYearDisplayProps {
+  hoveredYear: number | null;
+  hoveredYearPosition: number;
+  selectedYearPosition: number;
+}
+
+interface MenuMovies {
+  [key: number]: Movie[];
+}
+
+interface ImageElementEvent extends React.SyntheticEvent<HTMLImageElement> {
+  target: HTMLImageElement;
+}
 
 const Container = styled(Box)({
   height: "100vh",
@@ -142,7 +158,7 @@ const LoadingPoster = styled(Skeleton)({
   borderRadius: "8px",
 });
 
-const BigYearDisplay = styled(Box)(
+const BigYearDisplay = styled(Box)<StyledYearDisplayProps>(
   ({ hoveredYear, hoveredYearPosition, selectedYearPosition }) => ({
     position: "absolute",
     left: "0",
@@ -214,20 +230,25 @@ const StyledMenuItem = styled(MenuItem)({
   },
 });
 
-const MarvelTimeline = () => {
-  const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedYear, setSelectedYear] = useState(2008);
-  const [hoveredYear, setHoveredYear] = useState(null);
-  const [hoveredYearPosition, setHoveredYearPosition] = useState(0);
-  const [selectedYearPosition, setSelectedYearPosition] = useState(0);
-  const [selectedMovie, setSelectedMovie] = useState(null);
-  const [menuAnchor, setMenuAnchor] = useState(null);
-  const [menuMovies, setMenuMovies] = useState({});
-  const moviePostersRef = useRef(null);
+const MarvelTimeline: React.FC = () => {
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [selectedYear, setSelectedYear] = useState<number>(2008);
+  const [hoveredYear, setHoveredYear] = useState<number | null>(null);
+  const [hoveredYearPosition, setHoveredYearPosition] = useState<number>(0);
+  const [selectedYearPosition, setSelectedYearPosition] = useState<number>(0);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+  const [menuMovies, setMenuMovies] = useState<MenuMovies>({});
+  const moviePostersRef = useRef<HTMLDivElement>(null);
+
+  const timelineYears: number[] = [
+    2008, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021,
+    2022, 2023,
+  ];
 
   useEffect(() => {
-    const fetchMovies = async () => {
+    const fetchMovies = async (): Promise<void> => {
       try {
         setLoading(true);
         const movieData = await getMarvelPhaseOneMovies(selectedYear);
@@ -243,8 +264,8 @@ const MarvelTimeline = () => {
   }, [selectedYear]);
 
   useEffect(() => {
-    const fetchAllMovies = async () => {
-      const allMovies = {};
+    const fetchAllMovies = async (): Promise<void> => {
+      const allMovies: MenuMovies = {};
       for (const year of timelineYears) {
         try {
           const movies = await getMarvelPhaseOneMovies(year);
@@ -265,28 +286,60 @@ const MarvelTimeline = () => {
     }
   }, [selectedYear]);
 
-  const timelineYears = [
-    2008, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021,
-    2022, 2023,
-  ];
-
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>): void => {
     setMenuAnchor(event.currentTarget);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (): void => {
     setMenuAnchor(null);
   };
 
-  const handleMovieSelect = (movie, year) => {
+  const handleMovieSelect = (movie: Movie, year: number): void => {
     setSelectedYear(year);
     setSelectedMovie(movie);
     handleMenuClose();
   };
 
+  const handleYearClick = (
+    e: React.MouseEvent<HTMLDivElement>,
+    year: number
+  ): void => {
+    setSelectedYear(year);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    if (window.innerWidth <= 900) {
+      setSelectedYearPosition(rect.top + scrollTop);
+    } else {
+      setSelectedYearPosition(rect.top);
+    }
+  };
+
+  const handleYearHover = (
+    e: React.MouseEvent<HTMLDivElement>,
+    year: number
+  ): void => {
+    setHoveredYear(year);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    if (window.innerWidth <= 900) {
+      setHoveredYearPosition(rect.top + scrollTop);
+    } else {
+      setHoveredYearPosition(rect.top);
+    }
+  };
+
+  const logoStyles: SxProps<Theme> = {
+    width: "300px",
+    marginBottom: "30px",
+    display: "block",
+    "@media (max-width: 900px)": {
+      width: "200px",
+      marginBottom: "20px",
+    },
+  };
+
   return (
     <Container>
-      {/* Left Section */}
       <LeftSection>
         <MenuButton onClick={handleMenuOpen}>
           <MenuIcon />
@@ -344,18 +397,11 @@ const MarvelTimeline = () => {
             alignItems: "center",
           }}
         >
-          <img
+          <Box
+            component="img"
             src="https://upload.wikimedia.org/wikipedia/commons/b/b9/Marvel_Logo.svg"
             alt="Marvel Logo"
-            style={{
-              width: "300px",
-              marginBottom: "30px",
-              display: "block",
-              "@media (max-width: 900px)": {
-                width: "200px",
-                marginBottom: "20px",
-              },
-            }}
+            sx={logoStyles}
           />
           <Typography
             variant="h6"
@@ -391,7 +437,6 @@ const MarvelTimeline = () => {
         </Typography>
       </LeftSection>
 
-      {/* Right Section */}
       <RightSection>
         <BigYearDisplay
           hoveredYear={hoveredYear}
@@ -459,29 +504,9 @@ const MarvelTimeline = () => {
             {timelineYears.map((year) => (
               <YearItem
                 key={year}
-                onClick={(e) => {
-                  setSelectedYear(year);
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const scrollTop =
-                    window.pageYOffset || document.documentElement.scrollTop;
-                  if (window.innerWidth <= 900) {
-                    setSelectedYearPosition(rect.top + scrollTop);
-                  } else {
-                    setSelectedYearPosition(rect.top);
-                  }
-                }}
-                onMouseEnter={(e) => {
-                  setHoveredYear(year);
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const scrollTop =
-                    window.pageYOffset || document.documentElement.scrollTop;
-                  if (window.innerWidth <= 900) {
-                    setHoveredYearPosition(rect.top + scrollTop);
-                  } else {
-                    setHoveredYearPosition(rect.top);
-                  }
-                }}
-                ref={(node) => {
+                onClick={(e) => handleYearClick(e, year)}
+                onMouseEnter={(e) => handleYearHover(e, year)}
+                ref={(node: HTMLDivElement | null) => {
                   if (node && year === selectedYear) {
                     const rect = node.getBoundingClientRect();
                     const scrollTop =
@@ -572,7 +597,7 @@ const MarvelTimeline = () => {
                   src={movie.poster_path}
                   alt={movie.title}
                   onClick={() => setSelectedMovie(movie)}
-                  onError={(e) => {
+                  onError={(e: ImageElementEvent) => {
                     e.target.src =
                       "https://via.placeholder.com/280x420?text=No+Poster";
                     console.log(`Failed to load poster for ${movie.title}`);
@@ -584,7 +609,6 @@ const MarvelTimeline = () => {
         </Box>
       </RightSection>
 
-      {/* Add MovieDetail component */}
       {selectedMovie && (
         <MovieDetail
           movie={selectedMovie}

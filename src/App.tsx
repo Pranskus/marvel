@@ -8,18 +8,18 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: "#e23636", // Marvel red
+      main: "#e23636",
     },
   },
 });
 
-function App() {
+const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <MarvelTimeline />
     </ThemeProvider>
   );
-}
+};
 
 export default App;
